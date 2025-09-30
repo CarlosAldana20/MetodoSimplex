@@ -4,7 +4,7 @@
     private double[][] restricciones;
      private double[] limites; 
      // Constructor
-    public Problema(double[] funcionObjetivo, double[][] restricciones, double[] limites) {
+    public ProblemaLP(double[] funcionObjetivo, double[][] restricciones, double[] limites) {
         this.funcionObjetivo = funcionObjetivo;
         this.restricciones = restricciones;
         this.limites = limites;
@@ -32,7 +32,7 @@
 
 
     //Aqui va la interface del programa
-     class Interface{
+    public class Interface{
          public static void main(String[] args) {
 
     }
