@@ -1,2 +1,0 @@
-# MetodoSimplex
-El programa se encargara de resolver cualquier problema de programación lineal  usando el método Simplex ya sea para Maximizar o Minimizar.
