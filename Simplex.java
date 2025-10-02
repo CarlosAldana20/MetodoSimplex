@@ -1,6 +1,6 @@
-class Simplex extends Estructura{
+class Simplex{
     //Resolver el problema usando el metodo
-    public static String resolver (problema problema){
+    public static String resolver (Problema problema){
         double[][] restricciones = problema.getRestricciones();
         double[]limites = problema.getLimites();
         double[]funcionObjetivo = problema.getFuncionObjetivo();
@@ -10,22 +10,18 @@ class Simplex extends Estructura{
 
         //Crear el algoritmo del metodo simplex
         while (true){
-            int columnaPivot = columnaMasNegativa (tabla);
+            int columnaPivot = seleccionarColumnaPivote (tabla);
             if (columnaPivot < 0 ){
                 break;
             }
-            int filaPivot = encontrarFilaPivot (tabla, columnaPivot);
+            int filaPivot = seleccionarFilaPivote (tabla, columnaPivot);
             if  (filaPivot < 0){
-                return;
-            }
-            //Realizar las operaciones con la columna pivot
-            if  (filaPivot < 0){
-                return;
+                return "No hay solucion al problema que ingresaste ";
             }
             //Realizar la operacion del pivot
-            realizarPivote(tabla,filaPivot,columnaPivot);  
+            realizarPivoteo(tabla,filaPivot,columnaPivot);  
         } 
-        return resultado(tabla, funcionObjetivo.length);
+        return construirResultado(tabla, funcionObjetivo.length);
     }
     //Construir la tabla
     private static double [][]construirTabla(double[][]restricciones, double[]limites, double[]funcionObjetivo){
