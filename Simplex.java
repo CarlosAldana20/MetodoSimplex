@@ -4,9 +4,10 @@ class Simplex{
         double[][] restricciones = problema.getRestricciones();
         double[]limites = problema.getLimites();
         double[]funcionObjetivo = problema.getFuncionObjetivo();
+        boolean maximiza = problema.maximiza();
 
         //Crear la tabla
-        double[][]tabla = construirTabla (restricciones, limites, funcionObjetivo);
+        double[][]tabla = construirTabla (restricciones, limites, funcionObjetivo, maximiza);
 
         //Crear el algoritmo del metodo simplex
         while (true){
@@ -21,13 +22,14 @@ class Simplex{
             //Realizar la operacion del pivot
             realizarPivoteo(tabla,filaPivot,columnaPivot);  
         } 
-        return construirResultado(tabla, funcionObjetivo.length);
+        return construirResultado(tabla, funcionObjetivo.length, maximiza);
     }
     //Construir la tabla
-    private static double [][]construirTabla(double[][]restricciones, double[]limites, double[]funcionObjetivo){
-        int a = restricciones.length;
-        int b = funcionObjetivo.length;
+    private static double [][]construirTabla(double[][]restricciones, double[]limites, double[]funcionObjetivo, boolean maximiza){
+        int a = restricciones.length; // Son el numero o cantidad de restricciones 
+        int b = funcionObjetivo.length; //Cantidad de variables
         double[][] tabla = new double[a + 1][b + a + 1];
+
         for (int i = 0; i < a; i++) {
             System.arraycopy(restricciones[i], 0, tabla[i], 0, b);
             // variable de holgura
@@ -36,7 +38,7 @@ class Simplex{
         }
         //Funcion objetivo con signo negativoo
         for (int j = 0; j < b; j++) {
-            tabla[a][j] = -funcionObjetivo[j];
+            tabla[a][j] = maximiza ? -funcionObjetivo[j] : funcionObjetivo[j];
         }
 
         return tabla;
@@ -96,7 +98,7 @@ class Simplex{
             }
         }
     }
-    private static String construirResultado(double[][] tabla, int numVariables) {
+    private static String construirResultado(double[][] tabla, int numVariables, boolean maximiza) {
         int m = tabla.length - 1;
         int columnas = tabla[0].length;
 
@@ -124,12 +126,17 @@ class Simplex{
 
         double valorOptimo = tabla[m][columnas - 1];
 
+        if  (!maximiza) {
+        valorOptimo *= -1 ;
+        }
+
         // Construir el resultado en texto
         StringBuilder resultado = new StringBuilder("Solución óptima encontrada:\n");
         for (int i = 0; i < numVariables; i++) {
+
             resultado.append("x").append(i + 1).append(" = ").append(solucion[i]).append("\n");
         }
-        resultado.append("Valor óptimo Z = ").append(valorOptimo);
+        resultado.append("Valor Z = ").append(valorOptimo);
 
         //(.toString convertira a String aun e imprimira el resultado)
 
