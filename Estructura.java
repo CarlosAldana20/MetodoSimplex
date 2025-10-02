@@ -3,12 +3,15 @@
     private double[] funcionObjetivo;
     private double[][] restricciones;
      private double[] limites; 
+     private boolean esMaximizacion;
      // Constructor
-    public Problema(double[] funcionObjetivo, double[][] restricciones, double[] limites) {
+    public Problema(double[] funcionObjetivo, double[][] restricciones, double[] limites, boolean esMaximizacion) {
         this.funcionObjetivo = funcionObjetivo;
         this.restricciones = restricciones;
         this.limites = limites;
-    }//Getters
+        this.esMaximizacion = esMaximizacion;
+    }
+    //Getters
      public double[] getFuncionObjetivo() {
         return funcionObjetivo;
     }
@@ -21,4 +24,7 @@
         return limites;
     }
 
+    public boolean isMaximizacion() {
+        return esMaximizacion;
+    }
 }
