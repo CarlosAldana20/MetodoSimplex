@@ -1,19 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+
 
 public class main extends JFrame {
-    private JTextArea areaEntrada;
+    private JTextField txtFO;
     private JTextArea areaSalida;
     private JRadioButton radioMax, radioMin;
+    private JTable tablaRest;
+
 
     public main() {
         setTitle("--------Método Simplex----------");
-        setSize(600, 500);
+        setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Panel superior con selección
+        // Panel superior 
         JPanel panelTop = new JPanel();
         radioMax = new JRadioButton("Maximización", true);
         radioMin = new JRadioButton("Minimización");
@@ -24,42 +26,92 @@ public class main extends JFrame {
         panelTop.add(radioMax);
         panelTop.add(radioMin);
 
-        // Área de entrada
-        areaEntrada = new JTextArea(10, 50);
-        areaEntrada.setBorder(BorderFactory.createTitledBorder("Ingrese datos (ejemplo en comentarios)"));
-        areaEntrada.setText(
-            "Ejemplo:\n" +
-            "Funcion objetivo: 3 5\n" +
-            "Restricciones:\n" +
-            "1 2 <= 8\n" +
-            "2 1 <= 10"
-        );
+        add(panelTop, BorderLayout.NORTH);
+
+        // entrada de los Datos
+        JPanel panelEntrada = new JPanel();
+        panelEntrada.setLayout(new BorderLayout());
+
+// F.objetivo
+JPanel panelFO = new JPanel();
+panelFO.add(new JLabel("Función objetivo (coeficientes separados por espacios):"));
+JTextField txtFO = new JTextField(20);
+panelFO.add(txtFO);
+panelEntrada.add(panelFO, BorderLayout.NORTH);
+
+// Restricciones con JTable
+JPanel panelRest = new JPanel(new BorderLayout());
+panelRest.add(new JLabel("Restricciones (coeficientes separados por espacios + límite):"), BorderLayout.NORTH);
+
+String[] columnNames = {"X1", "X2", "Límite"}; // Ajusta según número de variables
+Object[][] data = { {"0","0","0"}, {"0","0","0"} }; // Filas iniciales
+JTable tablaRest = new JTable(data, columnNames);
+panelRest.add(new JScrollPane(tablaRest), BorderLayout.CENTER);
+
+panelEntrada.add(panelRest, BorderLayout.CENTER);
+
+add(panelEntrada, BorderLayout.CENTER);
+
+       
 
         // Botón para resolver
+         JPanel panelBottom = new JPanel(new BorderLayout());
         JButton btnResolver = new JButton("Resolver");
-        btnResolver.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                resolverProblema();
-            }
-        });
-
+        btnResolver.addActionListener(e -> resolverProblema());
+        panelBottom.add(btnResolver, BorderLayout.NORTH);
+          
         // Área de salida
         areaSalida = new JTextArea(10, 50);
         areaSalida.setEditable(false);
         areaSalida.setBorder(BorderFactory.createTitledBorder("Resultado"));
-
-        // Agregar componentes a la ventana
-        add(panelTop, BorderLayout.NORTH);
-        add(new JScrollPane(areaEntrada), BorderLayout.CENTER);
-
-        // Panel inferior con botón + salida
-        JPanel panelBottom = new JPanel(new BorderLayout());
-        panelBottom.add(btnResolver, BorderLayout.NORTH);
         panelBottom.add(new JScrollPane(areaSalida), BorderLayout.CENTER);
 
-        add(panelBottom, BorderLayout.SOUTH);
+       add(panelBottom, BorderLayout.SOUTH);
 
         setVisible(true);
     }
+      
+        private void resolverProblema() {
+        try {
+            
+            String texto = areaEntrada.getText();
+            String[] lineas = texto.split("\n");
+
+            // F.objetivo
+            String[] partesFO = txtFO.getText().trim().split("\\s+");
+            double[] funcionObjetivo = new double[partesFO.length];
+            for (int i = 0; i < partesFO.length; i++) {
+                funcionObjetivo[i] = Double.parseDouble(partesFO[i]);
+            }
+
+            // Restricciones
+              int numRestricciones = tablaRest.getRowCount();
+            double[][] restricciones = new double[numRestricciones][funcionObjetivo.length];
+            double[] limites = new double[numRestricciones];
+
+            for (int i = 0; i < numRestricciones; i++) {
+                for (int j = 0; j < funcionObjetivo.length; j++) {
+                    restricciones[i][j] = Double.parseDouble(tablaRest.getValueAt(i, j).toString());
+                }
+                limites[i] = Double.parseDouble(tablaRest.getValueAt(i, funcionObjetivo.length).toString());
+            }
+
+            boolean esMaximizacion = radioMax.isSelected();
+            Problema problema = new Problema(funcionObjetivo, restricciones, limites);
+            String resultado = Simplex.resolver(problema);
+
+            areaSalida.setText(resultado);
+
+        } catch (Exception ex) {
+            areaSalida.setText("⚠ Error en los datos ingresados. Revise el formato.\n" + ex.getMessage());
+            ex.printStackTrace(); }
+    }
+
+   public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new main());
+    }
 }
+
+    
+
     
