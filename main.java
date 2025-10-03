@@ -3,10 +3,10 @@ import java.awt.*;
 
 
 public class main extends JFrame {
-    private JTextField txtFO;
+    txtFO = new JTextField(20);
     private JTextArea areaSalida;
     private JRadioButton radioMax, radioMin;
-    private JTable tablaRest;
+    tablaRest = new JTable(data, columnNames);
 
 
     public main() {
@@ -73,9 +73,6 @@ add(panelEntrada, BorderLayout.CENTER);
       
         private void resolverProblema() {
         try {
-            
-            String texto = areaEntrada.getText();
-            String[] lineas = texto.split("\n");
 
             // F.objetivo
             String[] partesFO = txtFO.getText().trim().split("\\s+");
@@ -97,7 +94,7 @@ add(panelEntrada, BorderLayout.CENTER);
             }
 
             boolean esMaximizacion = radioMax.isSelected();
-            Problema problema = new Problema(funcionObjetivo, restricciones, limites);
+           Problema problema = new Problema(funcionObjetivo, restricciones, limites, esMaximizacion);
             String resultado = Simplex.resolver(problema);
 
             areaSalida.setText(resultado);
