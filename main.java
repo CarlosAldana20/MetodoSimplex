@@ -2,14 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class main extends JFrame {
+public class Main extends JFrame {
     private JTextField txtFO;
     private JTextArea areaSalida;
     private JRadioButton radioMax, radioMin;
-    private JTable tablaRest;
+     private JTable tablaRest;
 
 
-    public main() {
+
+    public Main() {
         setTitle("--------Método Simplex----------");
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,7 +36,7 @@ public class main extends JFrame {
 // F.objetivo
 JPanel panelFO = new JPanel();
 panelFO.add(new JLabel("Función objetivo (coeficientes separados por espacios):"));
-JTextField txtFO = new JTextField(20);
+txtFO = new JTextField(20);
 panelFO.add(txtFO);
 panelEntrada.add(panelFO, BorderLayout.NORTH);
 
@@ -45,7 +46,9 @@ panelRest.add(new JLabel("Restricciones (coeficientes separados por espacios + l
 
 String[] columnNames = {"X1", "X2", "Límite"}; // Ajusta según número de variables
 Object[][] data = { {"0","0","0"}, {"0","0","0"} }; // Filas iniciales
-JTable tablaRest = new JTable(data, columnNames);
+
+tablaRest = new JTable(data, columnNames);
+
 panelRest.add(new JScrollPane(tablaRest), BorderLayout.CENTER);
 
 panelEntrada.add(panelRest, BorderLayout.CENTER);
@@ -73,12 +76,9 @@ add(panelEntrada, BorderLayout.CENTER);
       
         private void resolverProblema() {
         try {
-            
-            String texto = areaEntrada.getText();
-            String[] lineas = texto.split("\n");
-
+           
             // F.objetivo
-            String[] partesFO = txtFO.getText().trim().split("\\s+");
+             String[] partesFO = txtFO.getText().trim().split("\\s+");
             double[] funcionObjetivo = new double[partesFO.length];
             for (int i = 0; i < partesFO.length; i++) {
                 funcionObjetivo[i] = Double.parseDouble(partesFO[i]);
@@ -97,9 +97,14 @@ add(panelEntrada, BorderLayout.CENTER);
             }
 
             boolean esMaximizacion = radioMax.isSelected();
-            Problema problema = new Problema(funcionObjetivo, restricciones, limites);
+            if (!esMaximizacion) {
+                // Si es minimización, invertimos los coeficientes
+                for (int i = 0; i < funcionObjetivo.length; i++) {
+                    funcionObjetivo[i] *= -1;
+                }
+            }
+ Problema problema = new Problema(funcionObjetivo, restricciones, limites, esMaximizacion);
             String resultado = Simplex.resolver(problema);
-
             areaSalida.setText(resultado);
 
         } catch (Exception ex) {
@@ -108,7 +113,7 @@ add(panelEntrada, BorderLayout.CENTER);
     }
 
    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new main());
+        SwingUtilities.invokeLater(() -> new Main()); // usar "Main"
     }
 }
 
