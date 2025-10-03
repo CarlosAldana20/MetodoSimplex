@@ -4,7 +4,7 @@ class Simplex{
         double[][] restricciones = problema.getRestricciones();
         double[]limites = problema.getLimites();
         double[]funcionObjetivo = problema.getFuncionObjetivo();
-        boolean maximiza = problema.maximiza();
+        boolean maximiza = problema.isMaximizacion();
 
         //Crear la tabla
         double[][]tabla = construirTabla (restricciones, limites, funcionObjetivo, maximiza);
